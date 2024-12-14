@@ -4,7 +4,7 @@ import os
 import sys
 
 # initialized nodes
-def initialize_nodes(id: str, node_data):
+def initialize_nodes_class(id: str, node_data):
     class_name = node_data['type'].capitalize()
     module_name = f"app.nodes.{node_data['type']}"  # Use the type directly to form the module name
     nodeData = {  'id': id, 
@@ -24,7 +24,7 @@ def initialize_nodes(id: str, node_data):
         return None
 
 
-def getGraph(data: str):
+def compGraph_init(data: str):
     G = nx.DiGraph()
     for node in data["nodes"]:
         G.add_node(node["id"], type=node["type"], data=node["data"])
@@ -42,34 +42,73 @@ def getGraph(data: str):
                 # Print edges sourced from this node
 
         # Initialize the class
-        instance = initialize_nodes(node_id, node_data)
+        instance = initialize_nodes_class(node_id, node_data)
+        print('here')
         if instance:
             print(f"Initialized class: {type(instance).__name__}")
             G.nodes[node_id]['instance'] = instance
            
 
-        # initialize the value of nodes. 
+    # First round source data initialization. Get data from previous nodes.  
     for node_id, node_data in G.nodes(data=True):
         # Collect all source node instances for the current target node
-        source_nodes = []
-        source_edges =     []
-        for edge in G.edges(data=True):
-            if edge[1] == node_id:
-                print(f"Edge ID: {edge[2]['id']}")
-                print(f"Source: {edge[0]}")
-                print(f"Target: {edge[1]}")
-                print("*" * 30)
-                
-                # Get the source node
-                source_node = (edge[0],G.nodes[edge[0]])
-                
-                #source_node = G.nodes[edge[0]]
-                source_nodes.append(source_node)
-                
-                source_edges.append(edge[2]['id'])
+        source_nodes, source_edges = collect_source_nodes(G, node_id)
         # Get the instance of the target node
         target_instance = G.nodes[node_id]['instance']
-        
         # Call getSource() on the target node's instance and pass the list of source node instances
         if(len(source_nodes)>0): target_instance.getSource(source_nodes, source_edges)
+    return(G)
 
+def collect_source_nodes(G, node_id):
+    source_nodes = []
+    source_edges = []
+    for edge in G.edges(data=True):
+        if edge[1] == node_id:
+            print(f"    Edge ID: {edge[2]['id']}, Source: {edge[0]}, Target: {edge[1]}")
+            # Get the source node
+            source_node = (edge[0], G.nodes[edge[0]])
+            source_nodes.append(source_node)
+            source_edges.append(edge[2]['id'])
+    return source_nodes, source_edges
+
+def compGraph_run(G, task_id):
+    '''
+    G is the computational graph
+    nodes has 'id', 'type' and 'data'
+    [node]['data'] has 'input', 'output', 'options' and 'instance'
+    returns: 
+    '''
+    status = 'error'
+    tempFile = f'/home/ubuntu/temp-run/{task_id}'
+    current_dir = os.getcwd()
+
+    if not os.path.exists(tempFile):
+        os.makedirs(tempFile)
+    os.chdir(tempFile)
+
+    for node_id, node_data in G.nodes(data=True):
+        if node_data['instance'] is None:
+            continue  # Skip this iteration if instance is None
+        print(node_id, node_data['instance'].status)
+
+    while True:
+        all_f = True 
+        for node_id, node_data in G.nodes(data=True):
+            if node_data['instance'] is None:
+                continue  # Skip this iteration if instance is None
+
+            if node_data['instance'].status == 'w':
+                node_data['instance'].compute()
+            if node_data['instance'].status != 'f' and node_data['instance'].status != 'e':
+                all_f = False
+                break
+        if all_f:
+            status = "Finished"
+            break
+
+    for node_id, node_data in G.nodes(data=True):
+        if node_data['instance'] is None:
+            continue  # Skip this iteration if instance is None
+        print(node_id, node_data['instance'].status)
+    os.chdir(current_dir)
+    return(status)

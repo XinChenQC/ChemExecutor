@@ -13,7 +13,11 @@ class N_1:
                                               Structure File          Add H  
         """
         self.fileData = "" # files loaded from front-end JSON
-        print(nodedata,'hha')
+        print(nodedata)
+        self.fileData = nodedata['data']['output']
+        self.status = 'f' # Should always be finished
+        
+        self.parameters = {}
     # 
     def check(self, fileData):
         """

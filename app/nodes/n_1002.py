@@ -4,7 +4,7 @@ class N_1002:
     # 
     def __init__(self, nodedata):
         """
-        Initialize the geometry optimization node.
+        Initialize the semiempirical engine node.
 
         :nodedata nodesdata: Dictionary containing the parameters for optimization.
             e.g. {  'id': '3', 
@@ -24,10 +24,12 @@ class N_1002:
 
 
         self.parameters["e_temperature"] = float(nodedata['data']['options'][1])
-        self.parameters["charge"] = float(nodedata['data']['options'][3])
+        self.parameters["charge"] = int(nodedata['data']['options'][3])
         self.parameters["spin"] = float(nodedata['data']['options'][2])
         self.parameters["software"] = nodedata['data']['options'][0]  # No need to convert to float
 
+
+        self.status = 'f' # Should always be finished
 
     def check(self, fileData):
         """

@@ -6,8 +6,8 @@ import time
 import json
 import asyncio
 from fastapi.middleware.cors import CORSMiddleware
-from app.data_handler import runcalc,load_data,process_output  # Import the new function
-from app.tograph import getGraph
+from app.data_handler import load_data,process_returnData  # Import the new function
+from app.tograph import compGraph_init,compGraph_run
 app = FastAPI()
 
 
@@ -52,12 +52,12 @@ async def process_file(task_id: str, file_path: str):
         tasks_status[task_id] = "on-going"
         # Run the simulation here
         data = load_data(file_path)  # Use the new function
-
-        getGraph(data)
-        #Run the xTB calculation
-        #runStatus = runcalc(RESULT_FOLDER+f"/{task_id}")
+        # compG is computational graph
+        compG = compGraph_init(data)        
+        
+        runStatus =  compGraph_run(compG, task_id)
         runStatus = "error"
-        data = process_output(task_id, data)  # Call the new function
+        #data = process_returnData(DataReturns, data)  # Process return data
                 
         result = {"processed": True, "data": data}  # 模拟处理的结果
         result_path = os.path.join(RESULT_FOLDER, f"{task_id}_result.json")
