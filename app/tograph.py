@@ -43,20 +43,25 @@ def compGraph_init(data: str):
 
         # Initialize the class
         instance = initialize_nodes_class(node_id, node_data)
-        print('here')
         if instance:
             print(f"Initialized class: {type(instance).__name__}")
             G.nodes[node_id]['instance'] = instance
+        else:
+            G.nodes[node_id]['instance'] = None
            
 
     # First round source data initialization. Get data from previous nodes.  
     for node_id, node_data in G.nodes(data=True):
         # Collect all source node instances for the current target node
+        
         source_nodes, source_edges = collect_source_nodes(G, node_id)
         # Get the instance of the target node
+        
         target_instance = G.nodes[node_id]['instance']
-        # Call getSource() on the target node's instance and pass the list of source node instances
-        if(len(source_nodes)>0): target_instance.getSource(source_nodes, source_edges)
+        if(target_instance is not None):
+            # Call getSource() on the target node's instance and pass the list of source node instances
+            if(len(source_nodes)>0): target_instance.getSource(source_nodes, source_edges)
+
     return(G)
 
 def collect_source_nodes(G, node_id):
@@ -99,6 +104,7 @@ def compGraph_run(G, task_id):
 
             if node_data['instance'].status == 'w':
                 node_data['instance'].compute()
+                os.chdir(tempFile)
             if node_data['instance'].status != 'f' and node_data['instance'].status != 'e':
                 all_f = False
                 break

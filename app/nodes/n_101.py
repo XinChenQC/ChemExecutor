@@ -88,6 +88,7 @@ class N_101:
                 conv = 'loose'
 
             os.makedirs(self.tmpdir)
+            print(self.tmpdir)
             os.chdir(self.tmpdir)
 
             output_data = self.structure[0].replace('\r\n', '\n')
@@ -110,7 +111,6 @@ class N_101:
                     log_content = log_file.read()
                     if 'finished run' in log_content:
                         subprocess.run(["mv", "xtbopt.log", "opt.xyz"])
-                        print('here')
                         # Add energy extraction and plotting code
                         energies = []
                         steps = []
@@ -155,7 +155,7 @@ class N_101:
                             fcoord = f.read()
                         
                         self.nodedata_return['output'] = [fcoord ,traj, svg]
-                        #print(self.nodedata_return['data']['output'])
+                        print(fcoord)
                     else:
                         print('ss')
                         self.status = "e"
