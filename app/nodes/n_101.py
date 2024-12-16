@@ -155,7 +155,6 @@ class N_101:
                             fcoord = f.read()
                         
                         self.nodedata_return['output'] = [fcoord ,traj, svg]
-                        print(fcoord)
                     else:
                         print('ss')
                         self.status = "e"
