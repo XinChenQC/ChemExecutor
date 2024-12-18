@@ -8,6 +8,8 @@ import asyncio
 from fastapi.middleware.cors import CORSMiddleware
 from app.data_handler import load_data,process_returnData  # Import the new function
 from app.tograph import compGraph_init,compGraph_run
+
+import shutil #zip
 app = FastAPI()
 
 
@@ -83,20 +85,29 @@ async def get_task_status(task_id: str):
         return {"status": "finished", "result": result_data}
     return {"status": status}
 
-@app.get("/traj/{task_id}")
+@app.get("/download/{task_id}")
 async def download_file(task_id: str):
-    file_path = f"./results/{task_id}/opt.xyz"
-    print(file_path)
-    if not os.path.exists(file_path):
+    file_path = os.path.join('/home/ubuntu/temp-run/', task_id)
+    zip_path = os.path.join('/home/ubuntu/temp-run/', f"{task_id}.zip")
+    print(zip_path)
+    try:
+        shutil.make_archive(file_path, 'zip', file_path)
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Failed to create zip file: {str(e)}"}
+        )
+
+    if not os.path.exists(zip_path):
         return JSONResponse(
             status_code=404,
             content={"error": "File not found"}
         )
     
     return FileResponse(
-        path=file_path,
-        filename=f"optimization_{task_id}.xyz",
-        media_type="application/octet-stream"
+        path=zip_path,
+        filename=f"{task_id}_results.zip",
+        media_type="application/zip"
     )
 
 

@@ -47,6 +47,7 @@ class N_101:
 
         for node in prenodes:
             # semiempirical
+            #print(node[1]['type'] )
             if(node[1]['type'] == 'n_1002'): 
                 self.engine_type = 'SE'
                 self.engine_parameter = node[1]['instance'].parameters
@@ -59,6 +60,10 @@ class N_101:
             # Read structure
             if(node[1]['type'] == 'n_1'): 
                 self.structure = node[1]['instance'].fileData
+            
+            if(node[1]['type'] == 'n_103'): 
+                print(node[1]['instance'].outStruc)
+                self.structure = node[1]['instance'].outStruc
 
             if self.structure and self.engine_parameter and self.engine_type:
                 self.status = 'w'
