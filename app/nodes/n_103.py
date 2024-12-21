@@ -28,6 +28,7 @@ class N_103:
         self.structures = [0,0]
         self.numStruc1 = nodedata['data']['options'][0]
         self.numStruc2 = nodedata['data']['options'][1]
+        self.blocksize = nodedata['data']['options'][2]
         self.outStruc = None
 
         self.tmpdir = nodedata['id']+"_complexsearch"
@@ -77,12 +78,12 @@ output mixture.xyz
 
 structure 1.xyz
   number {self.numStruc1}
-  inside box 5. 5. 5. 20. 20. 20.
+  inside box 0. 0. 0. {self.blocksize}
 end structure
 
 structure 2.xyz
   number {self.numStruc2}
-  inside box 0. 0. 0. 20. 20. 20.
+  inside box 0. 0. 0. {self.blocksize}
 end structure
 """
         with open('inputfile', "w") as f:
@@ -90,7 +91,7 @@ end structure
         
         try:
             # Execute Linux command and redirect output to out.log
-            result = subprocess.run(f"{self.packmol} < inputfile", check=True, capture_output=True, text=True, shell=True)
+            result = subprocess.run(f"{self.packmol} < inputfile > out.log", check=True, capture_output=True, text=True, shell=True)
             print(f"stdout: {result.stdout}")
             print(f"stderr: {result.stderr}")
             

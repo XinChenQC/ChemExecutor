@@ -96,8 +96,11 @@ def compGraph_run(G, task_id):
             continue  # Skip this iteration if instance is None
         print(node_id, node_data['instance'].status)
 
+    nloop = 0
     while True:
         all_f = True 
+        nloop=nloop+1
+        print(nloop)
         for node_id, node_data in G.nodes(data=True):
         
             if node_data['instance'] is None:
@@ -117,7 +120,7 @@ def compGraph_run(G, task_id):
                     node_data['instance'].status = 'e'
                     print(f"Error during computation: {e}")
                     os.chdir(tempFile)
-            if node_data['instance'].status != 'f' and node_data['instance'].status != 'e':
+            if node_data['instance'].status != 'f' and node_data['instance'].status != 'e' and nloop>10:
                 all_f = False
                 break
         if all_f:
