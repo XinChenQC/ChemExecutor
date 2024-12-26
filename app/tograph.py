@@ -84,7 +84,7 @@ def compGraph_run(G, task_id):
     returns: 
     '''
     status = 'error'
-    tempFile = f'/home/ubuntu/temp-run/{task_id}'
+    tempFile = f'/home/xchen/Work/fastAPI/temp/{task_id}'
     current_dir = os.getcwd()
 
     if not os.path.exists(tempFile):

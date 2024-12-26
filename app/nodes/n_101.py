@@ -33,7 +33,7 @@ class N_101:
         self.status = 'u' #w: waiting, r:running f:finished u:cannot run. e:error
         self.structure = None
         self.tmpdir = nodedata['id']+"_opt"
-        self.xtb = "/home/ubuntu/software/xtb-dist/bin/xtb"
+        self.xtb = "/home/xchen/software/xtb-6.6.1/bin/xtb"
         self.dftbp = "dftbp"
         self.convcri = nodedata['data']['options'][0]
         self.nodedata_return = nodedata['data']
@@ -96,14 +96,12 @@ class N_101:
             print(self.tmpdir)
             os.chdir(self.tmpdir)
 
-            output_data = self.structure[0].replace('\r\n', '\n')
+            output_data = self.structure[0][0].replace('\r\n', '\n')
+            print(output_data,'ssss')
             with open('input.xyz', 'w') as f:
                 f.write(output_data)
 
-            if(software== 'xTB'):
-                command = f"{self.xtb} --opt {conv} --charge {chrg} --uhf {spin} --etemp {temp} aa.xyz"
 
-            print(command)
             print(f"Current directory: {os.getcwd()}")
 
 
@@ -159,7 +157,7 @@ class N_101:
                         with open(conv_path) as f:
                             fcoord = f.read()
                         
-                        self.nodedata_return['output'] = [fcoord ,traj, svg]
+                        self.nodedata_return['output'] = [[fcoord,'xyz'] ,[traj,'xyz'], svg]
                     else:
                         print('ss')
                         self.status = "e"

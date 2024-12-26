@@ -32,8 +32,8 @@ class N_103:
         self.outStruc = None
 
         self.tmpdir = nodedata['id']+"_complexsearch"
-        self.xtb = "/home/ubuntu/software/xtb-dist/bin/xtb"
-        self.packmol = "/home/ubuntu/software/packmol/packmol"
+        self.xtb = "/home/xchen/software/xtb-6.6.1/bin/xtb"
+        self.packmol = "/home/xchen/software/packmol/packmol"
 
         self.nodedata_return = nodedata['data']
         print(nodedata['data'])
@@ -49,7 +49,7 @@ class N_103:
         self.status = 'w'
         for node, link in zip(prenodes, links):
             num = int(link[-1])-1
-            self.structures[num] = node[1]['data']['output'][0]
+            self.structures[num] = node[1]['data']['output'][0][0]
         #print(self.structures)
 
 
@@ -100,8 +100,8 @@ end structure
             mixStruct_path = f"{self.tmpdir}/mixture.xyz"
             with open(mixStruct_path) as f:
                 mixStruct = f.read()
-            self.nodedata_return['output'] = [mixStruct]
-            self.outStruc = [mixStruct]
+            self.nodedata_return['output'] = [[mixStruct,'xyz']]
+            self.outStruc = [[mixStruct,'xyz']]
             self.status = "f"
         finally:
             pass
