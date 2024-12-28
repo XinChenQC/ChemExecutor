@@ -87,8 +87,8 @@ async def get_task_status(task_id: str):
 
 @app.get("/download/{task_id}")
 async def download_file(task_id: str):
-    file_path = os.path.join('/home/ubuntu/temp-run/', task_id)
-    zip_path = os.path.join('/home/ubuntu/temp-run/', f"{task_id}.zip")
+    file_path = os.path.join('/home/xchen/Work/fastAPI/temp/', task_id)
+    zip_path = os.path.join('/home/xchen/Work/fastAPI/temp/', f"{task_id}.zip")
     print(zip_path)
     try:
         shutil.make_archive(file_path, 'zip', file_path)
