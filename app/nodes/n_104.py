@@ -16,9 +16,9 @@ class N_104:
         :nodedata nodesdata: Dictionary containing the parameters for optimization.
                 e.g. {  'id': '104', 
                       'type': 'n_104', 
-                      'data': {'input': [], 'output': [0], 'options': [seq]}
-                                                ^                      ^     
-                                          structurefile            Sequence
+                      'data': {'input': [], 'output': [0], 'options': [seq, pH,           addH]}
+                                                ^                      ^     ^             ^
+                                          structurefile            Sequence, pH value,  add hydrogen?
                      }
         """
         self.sequence = None
@@ -27,8 +27,14 @@ class N_104:
         self.status = 'w' #w: waiting, r:running f:finished u:cannot run. e:error
 
         self.sequence = nodedata['data']['options'][0].replace('\n', '').strip()
+
+        self.pH = float(nodedata['data']['options'][1])
+        self.addH = nodedata['data']['options'][2]
+
         self.outStruc = None
 
+        
+        self.obabel = "obabel"
         self.tmpdir = nodedata['id']+"_esmfold"
 
         self.nodedata_return = nodedata['data']
@@ -84,10 +90,18 @@ class N_104:
             response_body = response.json()
             print(response_body)
             Struct = response_body['pdbs'][0]
-            self.nodedata_return['output'] = [[Struct,'pdb']]
-            self.outStruc = [[Struct,'pdb']]
+  
             with open('out.pdb', "w") as f:
                 f.write(Struct)
+            if (self.addH):
+                result = subprocess.run(f"{self.obabel} out.pdb -O out_withH.pdb -p {self.pH}", check=True, capture_output=True, text=True, shell=True)
+                print(f"stdout: {result.stdout}")
+                print(f"stderr: {result.stderr}")
+                with open('out_withH.pdb', "r") as f:
+                    Struct = f.read()
+            print(Struct)
+            self.nodedata_return['output'] = [[Struct,'pdb']]
+            self.outStruc = [[Struct,'pdb']]
             self.status = "f"
         finally:
             pass
