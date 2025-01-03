@@ -54,7 +54,7 @@ async def process_file(task_id: str, file_path: str):
         tasks_status[task_id] = "on-going"
         # Run the simulation here
         data = load_data(file_path)  # Use the new function
-        print(data)
+        #print(data)
         # compG is computational graph
         compG = compGraph_init(data)        
         

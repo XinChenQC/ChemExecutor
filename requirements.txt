@@ -6,3 +6,4 @@ uvicorn
 networkx
 matplotlib
 numpy
+vina

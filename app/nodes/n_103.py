@@ -16,9 +16,9 @@ class N_103:
         :nodedata nodesdata: Dictionary containing the parameters for optimization.
                 e.g. {  'id': '2', 
                       'type': 'n_101', 
-                      'data': {'input': [0, 0], 'output': [0], 'options': ['Tight',      'LBFGS',     False]}
+                      'data': {'input': [0, 0], 'output': [0], 'options': [number1,      number2,    '20 20 20']}
                                          ^  ^              ^                 ^              ^            ^
-                                    ngine  structurefile  Result:combo    Converge criteria   Algorithm    PBC
+                                      Struct1, Struct2  Result:combo  number of struc1  number of struc1    PBC size
                      }
         """
         self.engine_parameter = None
